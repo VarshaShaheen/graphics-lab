@@ -1,0 +1,134 @@
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+from OpenGL.GL import *
+
+import math
+import sys
+
+dy = 0
+dr = 0
+
+
+def head():
+    glColor(1, 1, 1)
+    glBegin(GL_POLYGON)
+    for i in range(360):
+        x = 7 * math.cos(math.radians(i))
+        y = 7 * math.sin(math.radians(i))
+        glVertex(x + 50, y + 50)
+    glEnd()
+
+
+def body():
+    glColor(1, 1, 1)
+    glBegin(GL_POLYGON)
+    for i in range(360):
+        x = 9 * math.cos(math.radians(i))
+        y = 12 * math.sin(math.radians(i))
+        glVertex(x + 50, y + 32)
+    glEnd()
+
+
+def eye():
+    glColor(0, 0, 0)
+    glBegin(GL_POLYGON)
+    for i in range(360):
+        x = 1 * math.cos(math.radians(i))
+        y = 1 * math.sin(math.radians(i))
+        glVertex(x + 47, y + 52)
+    glEnd()
+    glBegin(GL_POLYGON)
+    for i in range(360):
+        x = 1 * math.cos(math.radians(i))
+        y = 1 * math.sin(math.radians(i))
+        glVertex(x + 53, y + 52)
+    glEnd()
+
+
+def nose():
+    glColor(1, 1, 0)
+    glBegin(GL_TRIANGLES)
+    glVertex(49, 48)
+    glVertex(51, 48)
+    glVertex(50, 50)
+    glEnd()
+
+
+def cover():
+    global dy
+    glColor(0, 0, 0)
+    glBegin(GL_POLYGON)
+    glVertex2f(40, 65)
+    glVertex2f(60, 65)
+    glVertex2f(60, 65 - dy)
+    glVertex2f(40, 65 - dy)
+    glEnd()
+
+
+def floor():
+    glColor(0, 1, 0)
+    glBegin(GL_POLYGON)
+    glVertex2f(0, 0)
+    glVertex2f(100, 0)
+    glVertex2f(100, 20)
+    glVertex2f(0, 20)
+    glEnd()
+
+
+def snowman():
+    floor()
+    head()
+    body()
+    eye()
+    nose()
+    cover()
+    water()
+
+
+def water():
+    global dr
+    glColor(0,1,1)
+    glBegin(GL_POLYGON)
+    for i in range(180, 360, 1):
+        x = dr * math.cos(math.radians(i))
+        y = dr * math.sin(math.radians(i))
+        glVertex2f(x + 50, y + 20)
+    glEnd()
+
+
+def display():
+    glClear(GL_COLOR_BUFFER_BIT)
+    snowman()
+    glutSwapBuffers()
+
+
+def update(_):
+    global dy,dr
+    if dy < 45:
+        dy += 0.1
+    if dr < 15:
+        dr += 0.05
+    glutPostRedisplay()
+    glutTimerFunc(10, update, 0)
+
+
+def clearscreen():
+    glClearColor(0, 0, 0, 0)
+    gluOrtho2D(0, 100, 0, 100)
+
+
+def main():
+    glutInit(sys.argv)
+    glutInitWindowSize(1000, 1000)
+    glutInitWindowPosition(0, 0)
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
+    glutCreateWindow("snowman")
+
+    glutDisplayFunc(display)
+    glutTimerFunc(0, update, 0)
+    clearscreen()
+    glutMainLoop()
+
+
+if __name__ == "__main__":
+    main()
